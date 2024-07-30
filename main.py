@@ -133,10 +133,6 @@ def racian_mec(h, factor):
     g = np.power(x, 2) + np.power(y, 2)
     return g
 
-
-
-
-
 if __name__ == "__main__":
     '''
         LyDROO algorithm composed of four steps:
@@ -162,7 +158,8 @@ if __name__ == "__main__":
     arrival_lambda = 0.1 * np.ones((Nuser))  # average data arrival, 3 Mbps per user
 
     print(
-        '#user = %d, #channel=%d, K=%d, decoder = %s, Memory = %d, Delta = %d' % (Nuser, n, K, decoder_mode, Memory, Delta))
+        '#user = %d, #channel=%d, K=%d, decoder = %s, Memory = %d, Delta = %d' % (
+        Nuser, n, K, decoder_mode, Memory, Delta))
 
     # initialize data
     channel = np.zeros((n, Nuser))  # chanel gains
@@ -177,7 +174,6 @@ if __name__ == "__main__":
     h0 = np.ones((Nuser))
     for j in range(0, Nuser):
         h0[j] = Ad * (light / 4 / math.pi / fc / dist_v[j]) ** (loss_exponent)
-
 
     # TODO: 给mem net加1个维度，输入的时候加1个维度mec.Q，表示根据mec队列长度进行决策
     mem = MemoryDNN(net=[Nuser * 3, 256, 128, Nuser],
@@ -252,7 +248,8 @@ if __name__ == "__main__":
             # Q: 数据队列，Y：能量队列
             # dataA[i_idx - 1, :]：上一时刻的数据到达量，
             # rate[i_idx - 1, :]：上一时刻的计算速率
-            ResourceAllocation(mecRA,MEC_user_Map, user_MEC_Map, m_temp, h, w, Q[i_idx-1, :], Y[i_idx-1, :], V, i_idx-1)
+            ResourceAllocation(mecRA, MEC_user_Map, user_MEC_Map, m_temp, h, w, Q[i_idx - 1, :], Y[i_idx - 1, :], V,
+                               i_idx - 1)
             Q[i_idx, :] = Q[i_idx - 1, :] + dataA[i_idx - 1, :] - rate[i_idx - 1, :]  # current data queue
             # assert Q is positive due to float error
             Q[i_idx, Q[i_idx, :] < 0] = 0
@@ -262,7 +259,6 @@ if __name__ == "__main__":
                                      0)  # current energy queue
             # assert Y is positive due to float error
             Y[i_idx, Y[i_idx, :] < 0] = 0
-
 
         # scale Q and Y to close to 1; a deep learning trick
         # TODO:分NMEC次分别调用，得到每个MEC服务器的动作
@@ -276,7 +272,8 @@ if __name__ == "__main__":
             MECuserList_temp = MEC_user_Map[i_MEC]
             if len(MECuserList_temp) == 0:
                 continue
-            nn_input = np.concatenate((h[MECuserList_temp], Q[i_idx, MECuserList_temp] / 10000, Y[i_idx, MECuserList_temp] / 10000))
+            nn_input = np.concatenate(
+                (h[MECuserList_temp], Q[i_idx, MECuserList_temp] / 10000, Y[i_idx, MECuserList_temp] / 10000))
 
             # 1) 'Actor module' of LyDROO
             # generate a batch of actions
@@ -289,7 +286,8 @@ if __name__ == "__main__":
             for m in m_list:
                 # 2) 'Critic module' of LyDROO
                 # allocate resource for all generated offloading modes saved in m_list
-                r_list.append(SingleMECRAEvaluate(mecRA, 0,MEC_user_Map,m,h,w,Q[i_idx,:],Y[i_idx,:],V,i_idx,user_MEC_Map))
+                r_list.append(SingleMECRAEvaluate(mecRA, 0, MEC_user_Map, m, h, w, Q[i_idx, :], Y[i_idx, :], V, i_idx,
+                                                  user_MEC_Map))
                 # v_list用于记录并比较每个MEC服务器的目标值，找到最大的目标值对应的m作为决策动作
                 v_list.append(r_list[-1][0])
 
@@ -318,15 +316,14 @@ if __name__ == "__main__":
                 energy[i_idx, MECuserList[i_user]] = energytemp[MECuserList[i_user]]
             Obj[i_idx] += Objtemp
 
-
-
     mem.plot_cost()
     mecRA.QuePlot()
 
     plot_rate(Q.sum(axis=1) / Nuser, 100, 'Average Data Queue')
     plot_rate(energy.sum(axis=1) / Nuser, 100, 'Average Energy Consumption')
 
-    plot_double_rate(Q.sum(axis=1) / Nuser, rate.sum(axis=1) / Nuser, 100, 'Average Data Queue', 'Average Computation Rate')
+    plot_double_rate(Q.sum(axis=1) / Nuser, rate.sum(axis=1) / Nuser, 100, 'Average Data Queue',
+                     'Average Computation Rate')
 
     plot_optFrame(FrameX, FrameY)
 
