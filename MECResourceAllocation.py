@@ -105,6 +105,7 @@ class MECResourceAllocation:
         :param yitaa: 通信开销，传输1bit需要的能耗
         :return: aits 1*Nuser的矩阵
         """
+        # TODO:修改aits计算方式
         aits = np.zeros(self.Nuser)
         if len(A)!=self.Nuser:
             print("aits输入参数错误")

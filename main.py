@@ -261,11 +261,11 @@ if __name__ == "__main__":
             Y[i_idx, Y[i_idx, :] < 0] = 0
 
         # scale Q and Y to close to 1; a deep learning trick
-        # TODO:分NMEC次分别调用，得到每个MEC服务器的动作
+        # 分NMEC次分别调用，得到每个MEC服务器的动作
         m_temp = np.zeros((Nuser))
         for i_MEC in range(NMEC):
             # 输入每个用户信道增益h、数据队列Q和能量队列Y
-            # TODO: 基于i_MEC和MEC_user_Map[i_MEC]得到每个MEC服务器的所有用户的h和数据队列和能量队列，组装nn_input
+            # 基于i_MEC和MEC_user_Map[i_MEC]得到每个MEC服务器的所有用户的h和数据队列和能量队列，组装nn_input
             # nn_input = np.concatenate((h, Q[i_idx, :] / 10000, Y[i_idx, :] / 10000))
             if i_MEC not in MEC_user_Map:
                 continue
@@ -302,7 +302,7 @@ if __name__ == "__main__":
             # 调用mem的encode函数，将最大的目标值对应的m作为动作记录，用于训练
             mem.encode(nn_input, m_list[k_idx_his[-1]])
             mode_his.append(m_list[k_idx_his[-1]])
-            # TODO: 根据选择的动作，组装MEC所对应的users的m_temp和rate和energy,Obj
+            # 根据选择的动作，组装MEC所对应的users的m_temp和rate和energy,Obj
             # Obj: 目标值，取所有的MEC服务器的目标值的和
             # rate: 计算速率，对所有MEC服务器管辖的用户，使用MEC_user_Map组装成1*Nuser的向量，计算每个用户的计算速率，用于更新Q
             # energy: 能耗，对所有MEC服务器管辖的用户，使用MEC_user_Map组装成1*Nuser的向量，计算每个用户的能耗，用于更新Y
