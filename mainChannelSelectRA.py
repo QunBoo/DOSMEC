@@ -175,7 +175,6 @@ if __name__ == "__main__":
     for j in range(0, Nuser):
         h0[j] = Ad * (light / 4 / math.pi / fc / dist_v[j]) ** (loss_exponent)
 
-    # TODO: 给mem net加1个维度，输入的时候加1个维度mec.Q，表示根据mec队列长度进行决策
     mem = MemoryDNN(net=[Nuser * 3, 256, 128, Nuser],
                     learning_rate=0.01,
                     training_interval=20,
